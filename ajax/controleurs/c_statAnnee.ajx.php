@@ -15,11 +15,9 @@ and open the template in the editor.
             $id_visiteur = $_SESSION["idVisiteur"];
             switch($action)
             {
-                case'voirStatAnnee':
-                {
-                    $lAnnee = $_POST["lstAnnee"];
+                case'voirStatAnnee':{
+                    $lAnnee = intval($_POST["lstAnnee"]);
                     $lesFraisAnnuels = $pdo->getLesFraisAnnuels($id_visiteur,$lAnnee);
-                    var_dump($lesFraisAnnuels);
                     include("vues/v_statAnnee.ajx.php");
                 }
             }
