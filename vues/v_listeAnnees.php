@@ -1,4 +1,4 @@
-﻿<h2>Mes fiches de frais</h2>
+<h2>Mes fiches de frais</h2>
 
 <div class="row">
     <div class="col-md-4">
@@ -10,7 +10,8 @@
                 <label for="lstAnnee" accesskey="n">Année : </label>
                 <select id="lstAnnee" name="lstAnnees" class="form-control">
                     <?php
-                    foreach ($lesAnnees as $uneAnnee) {
+                    foreach ($lesAnnees as $uneAnnee) 
+                    {
                         $annee = $uneAnnee['annee'];
                         ?>
                         <option selected value="<?php echo $annee ?>"><?php echo $annee ?></option>
@@ -19,7 +20,7 @@
                     ?>
                 </select>
             </div>
-            <input id="ok" type="submit" value="Valider" class="btn btn-success" role="button" onclick="afficherStatAnnee()"/>
+            <input id="ok" type="submit" value="Valider" class="btn btn-success" role="button" onclick="afficherStatAnnee();return false"/>
             <input id="annuler" type="reset" value="Effacer" class="btn btn-danger" role="button" />
         </form>
         <div id="zoneStat">
