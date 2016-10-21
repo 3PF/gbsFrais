@@ -189,4 +189,109 @@ function nbErreurs() {
         return count($_REQUEST['erreurs']);
     }
 }
+
+
+/**
+* Retourne le mois d'une date exprimé en français
+* @date : un numéro de mois
+* @mode : 1 == le mois en entier, 2 == le mois abrégé
+* @return le mois
+*/
+function getMonth($month,$mode) {
+   switch ($month) {
+       case 1 : {
+           if ($mode == 1) {
+               $result = 'Janvier';
+           }
+           else {
+               $result = 'Jan';
+           }
+       } break;
+       case 2 : {
+           if ($mode == 1) {
+               $result = 'Février';
+           }
+           else {
+               $result = 'Fév';
+           }
+       } break;
+       case 3 : {
+           if ($mode == 1) {
+               $result = 'Mars';
+           }
+           else {
+               $result = 'Mar';
+           }
+       } break;
+       case 4 : {
+           if ($mode == 1) {
+               $result = 'Avril';
+           }
+           else {
+               $result = 'Avr';
+           }
+       } break;
+       case 5 : {
+           $result = 'Mai';
+       } break;
+       case 6 : {
+           if ($mode == 1) {
+               $result = 'Juin';
+           }
+           else {
+               $result = 'Jun';
+           }
+       } break;
+       case 7 : {
+           if ($mode == 1) {
+               $result = 'Juillet';
+           }
+           else {
+               $result = 'Jul';
+           }
+       } break;
+       case 8 : {
+           if ($mode == 1) {
+               $result = 'Août';
+           }
+           else {
+               $result = 'Aug';
+           }
+       } break;
+       case 9 : {
+           if ($mode == 1) {
+               $result = 'Septembre';
+           }
+           else {
+               $result = 'Sep';
+           }
+       } break;
+       case 10 : {
+           if ($mode == 1) {
+               $result = 'Octobre';
+           }
+           else {
+               $result = 'Oct';
+           }
+       } break;
+       case 11 : {
+           if ($mode == 1) {
+               $result = 'Novembre';
+           }
+           else {
+               $result = 'Nov';
+           }
+       } break;
+       case 12 : {
+           if ($mode == 1) {
+               $result = 'Décembre';
+           }
+           else {
+               $result = 'Dec';
+           }
+       } break;
+       default : $result = 'OOPS'; break;
+   }
+   return $result;
+}
 ?>
