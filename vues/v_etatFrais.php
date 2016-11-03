@@ -43,7 +43,7 @@
         foreach ($lesFraisHorsForfait as $unFraisHorsForfait) {
             $date = $unFraisHorsForfait['date'];
             $libelle = htmlspecialchars($unFraisHorsForfait['libelle']);
-            $montant = $unFraisHorsForfait['montant'];
+            $montant = str_replace('.',',',$unFraisHorsForfait['montant']);
             ?>
             <tr>
                 <td><?php echo $date ?></td>
