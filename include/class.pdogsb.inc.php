@@ -62,11 +62,107 @@ class PdoGsb {
         $mdp = PdoGsb::$salt . hash("sha256", $mdp . PdoGsb::$salt);
         $requete_prepare = PdoGsb::$monPdo->prepare("SELECT visiteur.id AS id, visiteur.nom AS nom, visiteur.prenom AS prenom "
                 . "FROM visiteur "
-                . "WHERE visiteur.login = :unLogin AND visiteur.mdp = :unMdp");
+                . "WHERE visiteur.login = :unLogin");
         $requete_prepare->bindParam(':unLogin', $login, PDO::PARAM_STR);
-        $requete_prepare->bindParam(':unMdp', $mdp, PDO::PARAM_STR);
         $requete_prepare->execute();
         return $requete_prepare->fetch();
+    }
+
+    public function setInfoVisiteur($firstName,$name,$mdp,$confirmMdp)
+    {
+
+        $mdp = PdoGsb::$salt . hash("sha256", $mdp . PdoGsb::$salt);
+        $requete = PdoGsb::$monPdo->query("SELECT MAX(id) as lastId FROM visiteur");
+        $result = $requete->fetch();
+        $lastId = 'f999';
+        $firstNb = $this->posFirstINTinStr($lastId);
+        $nb = 1;
+        $checkRequest = PdoGsb::$monPdo->prepare("SELECT :id NOT IN (SELECT id FROM visiteur)");
+        do{
+            $result = array(1);// Un tableau pour contenir le résultat de la requéte
+            if(intval(substr($lastId,$firstNb))<substr(VALUE_ID_VISITEUR,$firstNb-1))
+            {
+                $newId = $this->CreateUserID($lastId,$firstNb, $nb);
+                $checkRequest->bindParam(':id',$newId,PDO::PARAM_STR);
+                $checkRequest->execute();
+                $result = $checkRequest->fetch();
+                $nb +=1;
+            }
+            else{
+                //Puisque on à VALUE_ID_VISITEUR identifiants commencant par la première lettre substr($lastId,0,1) on va prendre la lettre suivante
+                $tbLetter = $this->getLetterInDB(1);
+                var_dump($tbLetter);
+                if(count($tbLetter)<25)
+                {
+                    $newLetter = chr(ord(key($tbLetter[count($tbLetter)-1]))+1);// On prend la lettre qui suit la dernière lettre du tableau
+                    $newId = $newLetter.'1';
+                    echo($newId);
+                }
+                else{
+                   for($i=0;$i<SIZE_ID_VISITEUR;$i++)
+                   {
+                       $tbLetter = $this->getLetterInDB($i);
+                   }
+                }
+            }
+            $checkRequest->closeCursor();
+        }while($result[0]==0);// On vérifie si l'id n'est pas déjà utilisé par un autre utilisateur
+
+        return $newId;
+    }
+
+    /**
+     *
+     * Créé une id pour l'utilisateur
+     * @param type $lastId le dernier identifiant de la base de données
+     * @param type $cut l'endroit à partir du quel il n'y à plus que des chiffres
+     * @param int $nb le chiffre à ajouté à l'identifiant précédent
+     * @return string un identifiant
+     */
+    public function CreateUserID($lastId,$cut,$nb)
+    {
+        $letterId = (substr($lastId,0,$cut));
+        $nbrID = (intval(substr($lastId,$cut)))+$nb;
+        $newId = $letterId.$nbrID;
+        return $newId;
+    }
+
+    /**
+     * getLetterInDB retourne les types d'id dans la BDD ainsi que le nombre d'id pour chaque type
+     * @param int $cut l'endroit ou couper les id de la base de donnée
+     * @return array un tableau contenant les types d'id dans la BDD ainsi que le nombre d'id pour chaque type
+     */
+    public function getLetterInDB($cut)
+    {
+        $rq = PdoGsb::$monPdo->prepare("SELECT COUNT(SUBSTR(id,1,:cut)) AS nb_type_id,SUBSTR(id,1,:cut) AS type_id  FROM visiteur GROUP BY SUBSTR(id,1,:cut)");
+        $rq->execute(array(":cut"=>$cut));
+        $searchLetter = $rq->fetchAll();
+        $tbLetter = array();
+        foreach($searchLetter as $letter){
+            if(preg_match("#^([a-z]{".$cut."})$#i",$letter["type_id"]))
+            {
+               $tbLetter[] = array($letter["type_id"]=>$letter["nb_type_id"]);
+            }
+        }
+        return $tbLetter;
+    }
+
+    /**
+     * posFirstINTinStr Retourne la position ou se trouve le premier chiffre d'une chaine de charactére
+     * @param type $str
+     * @return la position du premier chiffre d'une chaîne de charactères, si la chaine ne contient aucun chiffre renvoie -1
+     */
+    public function posFirstINTinStr($str)
+    {
+        $positionChiffre = -1;
+        for($a = 0 ;$a<strlen($str);$a++)
+        {
+            if(preg_match("#[0-9]#", $str[$a]))
+            {
+                return $a;
+            }
+        }
+        return $positionChiffre;
     }
 
     /**
@@ -123,7 +219,7 @@ class PdoGsb {
      */
     public function getLesFraisForfait($idVisiteur, $mois) {
         $requete_prepare = PdoGSB::$monPdo->prepare("SELECT fraisforfait.id as idfrais, "
-                . "fraisforfait.libelle as libelle, lignefraisforfait.quantite as quantite "
+                . "fraisforfait.libelle as libelle, lignefraisforfait.quantite as quantite, fraisforfait.montant as montant "
                 . "FROM lignefraisforfait "
                 . "INNER JOIN fraisforfait ON fraisforfait.id = lignefraisforfait.idfraisforfait "
                 . "WHERE lignefraisforfait.idvisiteur = :unIdVisiteur "
@@ -389,7 +485,7 @@ class PdoGsb {
         return $lesAnnees;
     }
 
-      /**
+    /**
      * Retourne sous forme d'un tableau associatif toutes les lignes de frais au forfait
      * concernées par les deux arguments
      *
@@ -398,7 +494,7 @@ class PdoGsb {
      * @return l'id, le libelle et la quantité sous la forme d'un tableau associatif
      */
     public function getLesFraisAnnuels($idVisiteur, $annee) {
-        
+
         $requete_prepare = PdoGSB::$monPdo->prepare("SELECT SUBSTR(mois,5,2) as month, idVisiteur as idVisteur,montantValide as montant"
                                                     . " FROM fichefrais WHERE idvisiteur = :idVisiteur AND SUBSTR(mois,1,4) = :uneAnne");
         $requete_prepare->execute(array(":idVisiteur"=>$idVisiteur,":uneAnne"=>  strval($annee)));

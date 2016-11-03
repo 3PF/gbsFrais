@@ -20,6 +20,7 @@
                             </div>
                         </div>
                         <input class="btn btn-lg btn-success btn-block" type="submit" value="Se connecter">
+                        <a href="index.php?uc=inscription">Incscription</a>
                     </fieldset>
                 </form>
             </div>

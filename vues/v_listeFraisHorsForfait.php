@@ -6,30 +6,30 @@
             <thead>
                 <tr>
                     <th class="date">Date</th>
-                    <th class="libelle">Libellé</th>  
-                    <th class="montant">Montant</th>  
-                    <th class="action">&nbsp;</th> 
+                    <th class="libelle">Libellé</th>
+                    <th class="montant">Montant</th>
+                    <th class="action">&nbsp;</th>
                 </tr>
-            </thead>  
+            </thead>
             <tbody>
                 <?php
                 foreach ($lesFraisHorsForfait as $unFraisHorsForfait) {
                     $libelle = htmlspecialchars($unFraisHorsForfait['libelle']);
                     $date = $unFraisHorsForfait['date'];
-                    $montant = $unFraisHorsForfait['montant'];
+                    $montant = str_replace('.', ',', $unFraisHorsForfait['montant']);
                     $id = $unFraisHorsForfait['id'];
-                    ?>           
+                    ?>
                     <tr>
                         <td> <?php echo $date ?></td>
                         <td> <?php echo $libelle ?></td>
                         <td><?php echo $montant ?></td>
-                        <td><a href="index.php?uc=gererFrais&action=supprimerFrais&idFrais=<?php echo $id ?>" 
+                        <td><a href="index.php?uc=gererFrais&action=supprimerFrais&idFrais=<?php echo $id ?>"
                                onclick="return confirm('Voulez-vous vraiment supprimer ce frais?');">Supprimer ce frais</a></td>
                     </tr>
                     <?php
                 }
-                ?>	  
-            </tbody>  
+                ?>
+            </tbody>
         </table>
     </div>
 </div>
@@ -42,9 +42,9 @@
                 <input type="text" id="txtDateHF" name="dateFrais" class="form-control" id="text">
             </div>
             <div class="form-group">
-                <label for="txtLibelleHF">Libellé</label>             
+                <label for="txtLibelleHF">Libellé</label>
                 <input type="text" id="txtLibelleHF" name="libelle" class="form-control" id="text">
-            </div> 
+            </div>
             <div class="form-group">
                 <label for="txtMontantHF">Montant : </label>
                 <div class="input-group">

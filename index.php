@@ -1,7 +1,10 @@
 <?php
 
-require_once("include/fct.inc.php");
+
+include ("include/config.inc.php");
+require_once ("include/fct.inc.php");
 require_once ("include/class.pdogsb.inc.php");
+
 session_start();
 $pdo = PdoGsb::getPdoGsb();
 $estConnecte = estConnecte();
@@ -34,9 +37,13 @@ switch ($uc) {
             include("controleurs/c_deconnexion.php");
             break;
         }
+    case 'inscription' : {
+            include("controleurs/c_inscription.php");
+            break;
+    }
    case 'statAnnee':
       {
-         include("controleurs/c_listeAnnees.php");
+         include("controleurs/c_listAnnees.php");
          break;
       }break;
 

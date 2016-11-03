@@ -10,7 +10,6 @@
  * @return vrai ou faux
  */
 function estConnecte() {
-   echo($_SESSION['idVisiteur']);
     return isset($_SESSION['idVisiteur']);
 }
 /**
@@ -91,8 +90,8 @@ function estTableauEntiers($tabEntiers) {
     return $ok;
 }
 /**
- * Vérifie si une date est inférieure d'un an à la date actuelle
- *
+ * Vérifie si une date est comprise entre 1 an avant aujourd'hui et aujourd'hui
+ * retourne vrai si invalide et faux si valide
  * @param $dateTestee
  * @return vrai ou faux
  */
@@ -102,8 +101,15 @@ function estDateDepassee($dateTestee) {
     $annee--;
     $AnPasse = $annee . $mois . $jour;
     @list($jourTeste, $moisTeste, $anneeTeste) = explode('/', $dateTestee);
-    return ($anneeTeste . $moisTeste . $jourTeste < $AnPasse);
+    $yearOk = ($anneeTeste . $moisTeste . $jourTeste > $AnPasse);
+    @list($jour, $mois, $annee) = explode('/', $dateActuelle);
+    $jour++;
+    $demain = $annee . $mois . $jour;
+    @list($jourTeste, $moisTeste, $anneeTeste) = explode('/', $dateTestee);
+    $tomorrowOk = $anneeTeste . $moisTeste . $jourTeste > $demain;
+    return ($tomorrowOk && $yearOk);
 }
+
 /**
  * Vérifie la validité du format d'une date française jj/mm/aaaa
  *
@@ -152,7 +158,7 @@ function valideInfosFrais($dateFrais, $libelle, $montant) {
             ajouterErreur("Date invalide");
         } else {
             if (estDateDepassee($dateFrais)) {
-                ajouterErreur("date d'enregistrement du frais dépassé, plus de 1 an");
+                ajouterErreur("Date d'enregistrement du frais dépassée de plus d'un an ou postérieure à la date du jour");
             }
         }
     }
@@ -189,6 +195,7 @@ function nbErreurs() {
         return count($_REQUEST['erreurs']);
     }
 }
+
 
 
 /**
