@@ -485,7 +485,7 @@ class PdoGsb {
         return $lesAnnees;
     }
 
-    /**
+     /**
      * Retourne sous forme d'un tableau associatif toutes les lignes de frais au forfait
      * concernées par les deux arguments
      *
@@ -494,12 +494,19 @@ class PdoGsb {
      * @return l'id, le libelle et la quantité sous la forme d'un tableau associatif
      */
     public function getLesFraisAnnuels($idVisiteur, $annee) {
-
-        $requete_prepare = PdoGSB::$monPdo->prepare("SELECT SUBSTR(mois,5,2) as month, idVisiteur as idVisteur,montantValide as montant"
-                                                    . " FROM fichefrais WHERE idvisiteur = :idVisiteur AND SUBSTR(mois,1,4) = :uneAnne");
-        $requete_prepare->execute(array(":idVisiteur"=>$idVisiteur,":uneAnne"=>  strval($annee)));
+        
+        if(!is_null($annee)){
+            $requete_prepare = PdoGSB::$monPdo->prepare("SELECT SUBSTR(mois,5,2) as month, idVisiteur as idVisteur,montantValide as montant, nbJustificatifs as nbJust"
+                                                        . " FROM fichefrais WHERE idvisiteur = :idVisiteur AND SUBSTR(mois,1,4) = :uneAnne");
+            $requete_prepare->execute(array(":idVisiteur"=>$idVisiteur,":uneAnne"=>  strval($annee)));
+        }
+        else{
+            $requete_prepare = PdoGSB::$monPdo->prepare("SELECT SUBSTR(mois,1,4) as year, idVisiteur as idVisteur,SUM(montantValide) as montant FROM fichefrais WHERE idvisiteur = :idVisiteur GROUP BY SUBSTR(mois,1,4) ");
+            $requete_prepare->execute(array(":idVisiteur"=>$idVisiteur));
+        }
         return $requete_prepare->fetchAll();
     }
+
 
 
 }
