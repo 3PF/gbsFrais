@@ -13,6 +13,8 @@ switch ($action) {
             break;
         }
     case 'validerMajFraisForfait': {
+        if(isset($_REQUEST['lesFrais']) and !empty($_REQUEST['lesFrais']))
+        {
             $lesFrais = $_REQUEST['lesFrais'];
             if (lesQteFraisValides($lesFrais)) {
                 $pdo->majFraisForfait($idVisiteur, $mois, $lesFrais);
@@ -20,6 +22,14 @@ switch ($action) {
                 ajouterErreur("Les valeurs des frais doivent être numériques");
                 include("vues/v_erreurs.php");
             }
+        }
+        else{
+            if ($pdo->estPremierFraisMois($idVisiteur, $mois)) {
+                $pdo->creeNouvellesLignesFrais($idVisiteur, $mois);
+            }
+            ajouterErreur("Les valeurs de frais ne doivent pas être vide");
+            include("vues/v_erreurs.php");
+        }
             break;
         }
     case 'validerCreationFrais': {
