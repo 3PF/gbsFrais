@@ -1,10 +1,7 @@
 <?php
 
-
-include ("include/config.inc.php");
-require_once ("include/fct.inc.php");
+require_once("include/fct.inc.php");
 require_once ("include/class.pdogsb.inc.php");
-
 session_start();
 $pdo = PdoGsb::getPdoGsb();
 $estConnecte = estConnecte();
@@ -33,14 +30,14 @@ switch ($uc) {
             include("controleurs/c_etatFrais.php");
             break;
         }
+    case 'etatFraisTotal' : {
+            include("controleurs/c_etatFraisTotal.php");
+            break;
+        }
     case 'deconnexion' : {
             include("controleurs/c_deconnexion.php");
             break;
         }
-    case 'inscription' : {
-            include("controleurs/c_inscription.php");
-            break;
-    }
    case 'statAnnee':
       {
          include("controleurs/c_listAnnees.php");
@@ -51,5 +48,14 @@ switch ($uc) {
 include("vues/v_pied.php");
 ?>
 
-<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<!--jQuery library-->
+<script src="bootstrap/js/jquery-3.1.1.js"></script>
+<script src="js/jquery-1.11.3.min.js"></script>
+
+<!--Bootstrap library-->
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<!--Perso library-->
 <script type="text/javascript" src="ajax\js\_ajax.lib.js"></script>
+
+
